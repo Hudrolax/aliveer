@@ -1,3 +1,5 @@
+# Github https://github.com/Hudrolax/aliveer
+
 import serial
 import time
 from datetime import datetime
