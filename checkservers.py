@@ -841,7 +841,11 @@ def CommandProcessing(_command,telegramuser,message):
 	elif _command.find('не дрочи 1с')>-1 or _command.find('не дрочи 1c')>-1 or _command.find('не дрочи сервер 1c')>-1 or _command.find('не дрочи сервер 1с')>-1:
 		global DoNotCheckServer1C
 		DoNotCheckServer1C = datetime.now()
-		return 'слушаюсь'				 		
+		return 'слушаюсь'
+	elif _command.find('отключи вотчдог служб')>-1:
+		for comp in servers:
+			answ = comp.SendMessage("stop_check_services")	
+		return 'отправил команду отключения вотчдога служб. Вотчдог сам включится через 3 часа.'				 		
 	else:
 		return 'unknown command: '+_command	
 
