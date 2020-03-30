@@ -842,7 +842,7 @@ def CommandProcessing(_command,telegramuser,message):
 		global DoNotCheckServer1C
 		DoNotCheckServer1C = datetime.now()
 		return 'слушаюсь'
-	elif _command.find('отключи вотчдог служб')>-1:
+	elif _command.find('отключи вотчдог служб')>-1 or _command.find('stop_check_services')>-1:
 		for comp in servers:
 			answ = comp.SendMessage("stop_check_services")	
 		return 'отправил команду отключения вотчдога служб. Вотчдог сам включится через 3 часа.'				 		
@@ -900,6 +900,8 @@ def get_text_messages(message):
 			helpmessage += 'send to golden1 update_base - запустить батник обновления базы\n'
 			helpmessage += '\n'
 			helpmessage += 'send to golden1 get_log - запросить лог обновления базы\n'
+			helpmessage += '\n'
+			helpmessage += 'отключи вотчдог служб - отключить вотчдог служб на 3 часа\n'
 
 			bot.send_message(message.from_user.id, helpmessage)
 			sticker = random.choice([None,'CAADAgAD4gMAAsSraAugnZfDFQtF3RYE','CAADAgAD-wEAAsoDBgunb7h3gbhrchYE','CAADAgADhgADnNbnCqwnwNen6VDWFgQ','CAADAgADMwEAAu7EoQp4cwmtNchFiRYE','CAADAgADwQIAAu7EoQrlofeMm-V3MBYE'])
