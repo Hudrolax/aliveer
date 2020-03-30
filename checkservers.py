@@ -21,8 +21,8 @@ import configparser
 import copy
 import subprocess
 
-config_path = 'settings.ini'
-vars_path = 'vars.ini'
+config_path = '/home/pi/aliveer/settings.ini'
+vars_path = '/home/pi/aliveer/vars.ini'
 WatchDogTimer = datetime.now()
 
 def create_config():
@@ -913,7 +913,7 @@ def get_text_messages(message):
 		bot.reply_to(message, "Ваш ID: %s" % message.from_user.id)
 	elif message.text == 'getconfig':
 		if _user != None:
-			doc = open('settings.ini', 'rb')
+			doc = open('/home/pi/aliveer/settings.ini', 'rb')
 			bot.send_document(message.from_user.id, doc)
 		else:
 			bot.reply_to(message, "Кто ты чудовище?")	
@@ -938,7 +938,7 @@ def handle_docs_audio(message):
 			sticker_id = message.sticker.file_id
 			bot.send_message(message.from_user.id, str(sticker_id))
 		elif message.content_type == 'document':
-			if message.document.file_name == 'settings.ini': 
+			if message.document.file_name == '/home/pi/aliveer/settings.ini': 
 				file_info = bot.get_file(message.document.file_id)
 				downloaded_file = bot.download_file(file_info.file_path)
 				with open('settings.ini', 'wb') as new_file:
