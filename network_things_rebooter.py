@@ -23,8 +23,7 @@ class CheckInternetConnection:
     def _check_site(self, site):
         try:
             content = requests.get(site).content.decode()
-            if __name__ == '__main__':
-                print(f'{site} is ok')
+            print(f'{site} is ok')
             return True
         except:
             if __name__ == '__main__':
