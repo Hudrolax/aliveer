@@ -22,7 +22,7 @@ class CheckInternetConnection:
 
     def _check_site(self, site):
         try:
-            content = requests.get(site).content.decode()
+            content = requests.get(site, timeout=5).content.decode()
             print(f'{site} is ok')
             return True
         except:
