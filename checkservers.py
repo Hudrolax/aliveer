@@ -20,6 +20,7 @@ import random
 import configparser
 import copy
 import subprocess
+from network_things_rebooter import NetworkThingsRebooter
 
 config_path = '/home/pi/aliveer/settings.ini'
 vars_path = '/home/pi/aliveer/vars.ini'
@@ -29,8 +30,8 @@ def create_config():
 	if not os.path.exists(config_path):
 		config = configparser.ConfigParser()
 		config['main'] = {'SendAlarmToTelegram': True,'SendAlarmToEmail': True}
-		config['emails'] = {'email-1': 'hudro795@gmail.com','email-2': 's.kondratyev@leskraft.ru','email-3': 'eksigo@gmail.com'}
-		config['TelegramAdmins'] = {'admin1': 'Nazarov;586035868','admin2': 'Kondratyev;490681790','admin3': 'Sklyarov;801701164'}
+		config['emails'] = {'email-1': 'hudro795@gmail.com','email-2': 's.kondratyev@leskraft.ru'}
+		config['TelegramAdmins'] = {'admin1': 'Nazarov;586035868','admin2': 'Kondratyev;490681790'}
 		config['server-1'] = {'name': 'server','ip': '192.168.18.202','port': 8686,'rel_number' : 1,'USBState':0,'Server1c_exist':False,'Server1C_user':'','Server1c_pass':'','Server1C_path':''}
 		config['server-2'] = {'name': 'node1','ip': '192.168.18.203','port': 8686,'rel_number' : 2,'USBState':1,'Server1c_exist':True,'Server1C_user':'aliveer','Server1c_pass':'93295841','Server1C_path':'/trade2016donate/hs/aliveer/test'}
 		with open(config_path, 'w') as configfile:
@@ -171,6 +172,7 @@ class Computer():
 		self.srv1c = srv1c
 		self.maintenance = False
 		self.maintenance_time = datetime.now()
+
 	def CheckState(self):
 		answer = SendTCPMessage(self.adress,'ping')
 		self.stateArray.pop(0)
@@ -244,26 +246,31 @@ class Computer():
 
 	def SendMessage(self,message):
 		return SendTCPMessage(self.adress,message)
+
 	def TurnOff(self,delay = 0):
 		message = 'shutdown'
 		if delay>0:
 			message = message+' '+str(delay)
 		return SendTCPMessage(self.adress,message)
+
 	def TurnON(self):
 		Arduino.RelDef(self.rel_number,True)
 		sleep(40)
 		Arduino.RelDef(self.rel_number,False)
 		return 'ON command sended'
+
 	def Reboot(self,delay = 0):
 		message = 'reboot'
 		if delay>0:
 			message = message+' '+str(delay)
 		return SendTCPMessage(self.adress,message)
+
 	def HardReboot(self):
 		Arduino.RelDef(self.rel_number,True)
 		sleep(40)
 		Arduino.RelDef(self.rel_number,False)
 		return 'HardReboot command sended'
+
 	def HardOff(self):
 		return Arduino.RelDef(self.rel_number,True)	
 
@@ -309,6 +316,7 @@ class CArduino():
 		self.ACExist = False
 		self.ACExistNow = False # pin 6
 		self.USBState = [Pins(8), Pins(9), Pins(10)] # pin 8-10
+
 	def ReadDCVoltage(self):
 		answer = ''
 		while answer.find('Voltage A0 =') == -1 and answer != 'error':
@@ -329,6 +337,7 @@ class CArduino():
 		except:
 			print('error line 172')
 			return 'Error convert str to float: '+str(voltageA0)
+
 	def ReadACStatus(self):
 		answer = ''
 		while answer.find('D6 =') == -1 and answer != 'error':
@@ -347,6 +356,7 @@ class CArduino():
 			self.ACExist = True
 		elif coeff == 0:
 			self.ACExist = False
+
 	def ReadPinsStatus(self):
 		for el in self.USBState: 
 			answer = ''
@@ -358,7 +368,6 @@ class CArduino():
 			else:
 				el.state = False
 
-		
 	def Initialize(self):
 		isFind = False
 		while not isFind: 
@@ -394,9 +403,11 @@ class CArduino():
 				sleep(10)
 			else:
 				print('Arduino is initialized on port '+comport)
+
 	def Reinitializing(self):
 		print("I'am lost connection to the Arduino. Now i to try reinitialize subcontroller!")
-		self.Initialize()	
+		self.Initialize()
+
 	def RelDef(self,rel,state):
 		if state:
 			str_state = 'ON'
@@ -406,6 +417,7 @@ class CArduino():
 			command = 'off'
 		answer = self.ExecuteCommand("rel%r_%s" % (rel, command))
 		return answer
+
 	def ExecuteCommand(self,_command):
 		n1 = 0
 		while n1<100:
@@ -417,9 +429,10 @@ class CArduino():
 						return self.qa.get()
 					n2 += 1
 					sleep(0.1)
-			n += 1
+			n1 += 1
 			sleep(0.1)
-		return 'Error put command in queue'				
+		return 'Error put command in queue'
+
 	def IOQueue(self):
 		while True:
 			if self.qc.qsize() > 0:
@@ -429,7 +442,8 @@ class CArduino():
 			self.ReadDCVoltage()
 			self.ReadACStatus()
 			self.ReadPinsStatus()
-			sleep(0.1)	
+			sleep(0.1)
+
 Arduino = CArduino() # конструктор Arduino
 
 class AlertsClass():
@@ -445,6 +459,7 @@ class AlertsClass():
 		self.AlertOffServersByDCLossEmail = False
 		self.AlertOnServersTelegramm = False
 		self.AlertOnServersEmail = False
+
 	def SendDCVoltageAlert(self,voltage):
 		if not self.AlertDCVoltageToTelegramSended:
 			message = 'Напряжение аккумулятора ИБП опустилось ниже %s V, сейчас произойдет отключение серверов.' % voltage
@@ -461,7 +476,8 @@ class AlertsClass():
 					self.SendEmail(emails_for_alarm,'Аккум на ИБП сдыхает',message)
 					self.AlertDCVoltageToEmailSended = True
 				except:
-					pass	
+					pass
+
 	def SendACStatusAlert(self):
 		if not self.AlertACLossToTelegrammSended:
 			message = 'Пропало питание на входе ИБП! Напряжение аккумулятора %s V (%s%%)' % (Arduino.DCACCVoltage, Arduino.DCACCVoltageInPercent)
@@ -478,7 +494,8 @@ class AlertsClass():
 					self.SendEmail(emails_for_alarm,'Пропало питание!',message)
 					self.AlertACLossToEmailSended = True
 				except:
-					pass		
+					pass
+
 	def SendOffServersAlert(self, delay, reason):
 		if not self.AlertOffServersByDCLossTelegramm:
 			message = ''
@@ -499,7 +516,8 @@ class AlertsClass():
 					self.SendEmail(emails_for_alarm,'Отключение серверов!',message)
 					self.AlertOffServersByDCLossEmail = True
 				except:
-					pass		
+					pass
+
 	def SendOnServersAlert(self, reason):
 		if not self.AlertOnServersTelegramm:
 			message = ''
@@ -520,9 +538,11 @@ class AlertsClass():
 					self.SendEmail(emails_for_alarm,'Включение серверов!',message)
 					self.AlertOnServersEmail = True
 				except:
-					pass		
+					pass
+
 	def SendEmail(self,_to,subject,message):
-		SendEmail(self.MailServer,self.user,self.password,_to,subject,message)											
+		SendEmail(self.MailServer,self.user,self.password,_to,subject,message)
+
 	def CheckSelf(self):
 		if self.AlertDCVoltageToTelegramSended and Arduino.DCACCVoltage>12:
 			self.AlertDCVoltageToTelegramSended = False
@@ -539,7 +559,8 @@ class AlertsClass():
 		if self.AlertOnServersTelegramm and Arduino.ACExist:
 			self.AlertOnServersTelegramm = False
 		if self.AlertOnServersEmail and Arduino.ACExist:
-			self.AlertOnServersEmail = False	
+			self.AlertOnServersEmail = False
+
 Alerts = AlertsClass('smtp.gmail.com:465','aliveerbot@gmail.com','wngpzqmufcpidyrk') # Конструктор алертов
 
 # Function of input in thread
@@ -1022,6 +1043,8 @@ def main():
 	TelegramBotThread = threading.Thread(target=TelegramBot, args=(), daemon=True)
 	TelegramBotThread.start()
 
+	network_things_rebooter = NetworkThingsRebooter(arduino=Arduino, things_rel_number=4)
+
 	while True:
 		GPIO.setmode(GPIO.BCM) # говорим о том, что мы будем обращаться к контактам по номеру канала 
 		GPIO.setup(17, GPIO.OUT) # Настраиваем GPIO пин 17 на вывод (чтобы мигать светодиодом на крышке)
@@ -1032,6 +1055,9 @@ def main():
 
 		# *** Блок принятия решений ***
 		Alerts.CheckSelf()
+
+		# Перезагрузка сетевого оборудования, если интернет отсутствует
+		network_things_rebooter.check_and_reboot()
 		
 		# Send alerts
 		if Arduino.DCACCVoltage <= 11.1:
