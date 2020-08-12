@@ -46,7 +46,7 @@ class NetworkThingsRebooter:
     def __init__(self, arduino, things_rel_number):
         self._arduino = arduino
         self._things_rel_number = things_rel_number
-        self._last_reboot_time = datetime.now()
+        self._last_reboot_time = datetime(2007, 12, 6, 16, 29, 43, 79043)
         self._check_connection = CheckInternetConnection()
 
     def check_and_reboot(self):
