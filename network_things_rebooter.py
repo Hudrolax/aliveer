@@ -27,6 +27,8 @@ class CheckInternetConnection:
                 print(f'{site} is ok')
             return True
         except:
+            if __name__ == '__main__':
+                print(f'{site} is offline')
             return False
 
     def _threaded_check_func(self):
@@ -40,6 +42,8 @@ class CheckInternetConnection:
             sleep(20)
 
 class NetworkThingsRebooter:
+    TIME_BETWEEN_REBOOTING = 600
+
     def __init__(self, arduino, things_rel_number):
         self._arduino = arduino
         self._things_rel_number = things_rel_number
@@ -48,7 +52,7 @@ class NetworkThingsRebooter:
 
     def check_and_reboot(self):
         if not self._check_connection.internet_is_available() \
-                and (datetime.now() - self._last_reboot_time).total_seconds() > 600:
+                and (datetime.now() - self._last_reboot_time).total_seconds() > self.TIME_BETWEEN_REBOOTING:
             self._arduino.RelDef(self._things_rel_number, True)
             sleep(10)
             self._arduino.RelDef(self._things_rel_number, False)
