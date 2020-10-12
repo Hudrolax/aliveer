@@ -1043,7 +1043,7 @@ def main():
 	TelegramBotThread = threading.Thread(target=TelegramBot, args=(), daemon=True)
 	TelegramBotThread.start()
 
-	network_things_rebooter = NetworkThingsRebooter(arduino=Arduino, things_rel_number=4)
+	# network_things_rebooter = NetworkThingsRebooter(arduino=Arduino, things_rel_number=4)
 
 	while True:
 		GPIO.setmode(GPIO.BCM) # говорим о том, что мы будем обращаться к контактам по номеру канала 
