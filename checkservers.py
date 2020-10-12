@@ -927,7 +927,7 @@ def get_text_messages(message):
 			bot.send_message(message.from_user.id, helpmessage)
 			sticker = random.choice([None,'CAADAgAD4gMAAsSraAugnZfDFQtF3RYE','CAADAgAD-wEAAsoDBgunb7h3gbhrchYE','CAADAgADhgADnNbnCqwnwNen6VDWFgQ','CAADAgADMwEAAu7EoQp4cwmtNchFiRYE','CAADAgADwQIAAu7EoQrlofeMm-V3MBYE'])
 			if sticker != None:
-				 bot.send_sticker(message.from_user.id, sticker)
+				bot.send_sticker(message.from_user.id, sticker)
 		else:
 			bot.reply_to(message, "Кто ты чудовище?")		 
 	elif message.text == 'getmyid':
@@ -991,23 +991,7 @@ def SendToAllTelegramSticker(message):
 
 def TelegramBot():
 	while True:
-		try:
-			content = str(requests.get('https://www.proxy-list.download/api/v1/get?type=http').content)
-			content = content.replace(r'\r\n',',')
-			content = content.replace("b'",'')
-			content = content.replace(",'",'')
-			a = content.split(',')
-			contarr = list(proxylist)
-			contarr.extend(a)
-		except:
-			sleep(0.1)
-			continue
-		for prox in contarr:
-			apihelper.proxy = {'https': prox}
-			try:
-				bot.polling(none_stop=True)
-			except:
-				sleep(0.1)
+		bot.polling(none_stop=True)
 
 # Main loop dunction
 N2Counter = 999999999
@@ -1043,7 +1027,7 @@ def main():
 	TelegramBotThread = threading.Thread(target=TelegramBot, args=(), daemon=True)
 	TelegramBotThread.start()
 
-	# network_things_rebooter = NetworkThingsRebooter(arduino=Arduino, things_rel_number=4)
+	network_things_rebooter = NetworkThingsRebooter(arduino=Arduino, things_rel_number=4)
 
 	while True:
 		GPIO.setmode(GPIO.BCM) # говорим о том, что мы будем обращаться к контактам по номеру канала 
@@ -1057,7 +1041,7 @@ def main():
 		Alerts.CheckSelf()
 
 		# Перезагрузка сетевого оборудования, если интернет отсутствует
-		# network_things_rebooter.check_and_reboot()
+		network_things_rebooter.check_and_reboot(bot, telegram_users)
 		
 		# Send alerts
 		if Arduino.DCACCVoltage <= 11.1:

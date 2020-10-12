@@ -49,9 +49,12 @@ class NetworkThingsRebooter:
         self._last_reboot_time = datetime(2007, 12, 6, 16, 29, 43, 79043)
         self._check_connection = CheckInternetConnection()
 
-    def check_and_reboot(self):
+    def check_and_reboot(self, bot, telegram_users):
         if not self._check_connection.internet_is_available() \
                 and (datetime.now() - self._last_reboot_time).total_seconds() > self.TIME_BETWEEN_REBOOTING:
+            for user in telegram_users:
+                bot.send_message(user.ID, 'Перезагрузил Kerio, т.к. чего-то не вижу интернета.')
+
             self._arduino.RelDef(self._things_rel_number, True)
             sleep(10)
             self._arduino.RelDef(self._things_rel_number, False)
