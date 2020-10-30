@@ -1041,7 +1041,7 @@ def main():
 		Alerts.CheckSelf()
 
 		# Перезагрузка сетевого оборудования, если интернет отсутствует
-		network_things_rebooter.check_and_reboot(bot, telegram_users)
+		#network_things_rebooter.check_and_reboot(bot, telegram_users)
 		
 		# Send alerts
 		if Arduino.DCACCVoltage <= 11.1:
