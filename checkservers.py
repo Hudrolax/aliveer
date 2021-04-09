@@ -46,7 +46,6 @@ emails_for_alarm = [] # e-mails list
 telegram_users = [] # telegram users list
 servers = [] # servers list
 backups = [] # backups list
-proxylist = ['217.61.124.6:3128','104.244.77.254:8080','94.23.197.219:3128','68.183.147.115:8080','94.177.255.8:8080','94.23.197.219:3128','51.38.69.83:8080','217.61.124.6:80']
 
 OffOnDCVoltage = True # Выключить, если разряжены аккумуляторы
 OffOnTime = True 	# Выключать сервера в нерабочее время, если отключилось питание на входе
@@ -61,7 +60,7 @@ GPIO.setup(17, GPIO.OUT) # Настраиваем GPIO пин 17 на вывод
 
 clear = lambda: os.system('clear') # присваиваем переменной функцию очистки экрана
 DirectCommandList = 'rel1_on rel1_off rel2_on rel2_off rel3_on rel3_off rel4_on rel4_off vold6 vold8 vold9 vold10' # Список команд, которые можно отправить непосредственно на Arduino
-API_TOKEN = '754688581:AAF-1Q1oCOO2kjCnZIfTk-7YYWLPMb9VGuA'
+API_TOKEN = '1772179747:AAFm2hVqrBFtWjTCiPqXm1QiL8f4MztEQw8'
 bot = telebot.TeleBot(API_TOKEN, threaded=False) # Конструктор бота
 
 class TelegramUsersClass():
@@ -1027,7 +1026,7 @@ def main():
 	TelegramBotThread = threading.Thread(target=TelegramBot, args=(), daemon=True)
 	TelegramBotThread.start()
 
-	network_things_rebooter = NetworkThingsRebooter(arduino=Arduino, things_rel_number=4)
+	#Network_things_rebooter = NetworkThingsRebooter(arduino=Arduino, things_rel_number=4)
 
 	while True:
 		GPIO.setmode(GPIO.BCM) # говорим о том, что мы будем обращаться к контактам по номеру канала 
