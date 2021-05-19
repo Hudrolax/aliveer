@@ -983,10 +983,12 @@ def SendToTelegramIdSticker(_id,message):
 def SendToAllTelegram(message):
 	for user in telegram_users:
 		SendToTelegramId(user.ID, message)
+		sleep(2)
 
 def SendToAllTelegramSticker(message):
 	for user in telegram_users:
-		SendToTelegramIdSticker(user.ID, message)		
+		SendToTelegramIdSticker(user.ID, message)
+		sleep(2)
 
 def TelegramBot():
 	while True:
