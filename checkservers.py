@@ -21,6 +21,7 @@ import configparser
 import copy
 import subprocess
 from network_things_rebooter import NetworkThingsRebooter
+from time import sleep
 
 config_path = '/home/pi/aliveer/settings.ini'
 vars_path = '/home/pi/aliveer/vars.ini'
